@@ -82,7 +82,6 @@ func planCreation(cfg *config.Cluster, networkName string) (createContainerFuncs
 
 	// plan normal nodes
 	for i, node := range cfg.Nodes {
-		fmt.Print(node.Devices)
 		node := node.DeepCopy() // copy so we can modify
 		name := names[i]
 
@@ -113,7 +112,6 @@ func planCreation(cfg *config.Cluster, networkName string) (createContainerFuncs
 				if err != nil {
 					return err
 				}
-				fmt.Printf("CP Node Args: %v\n", args)
 				return createContainerWithWaitUntilSystemdReachesMultiUserSystem(name, args)
 			})
 		case config.WorkerRole:
