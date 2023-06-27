@@ -118,7 +118,7 @@ type Node struct {
 	// binded to a host Port
 	ExtraPortMappings []PortMapping `yaml:"extraPortMappings,omitempty" json:"extraPortMappings,omitempty"`
 
-	// Devices allows to access CDI through the --devices flag added in Docker v25.
+	// Devices allows access to GPUs through CDI using the --devices flag added in Docker v25.
 	// https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#container-device-interface-cdi-support
 	Devices []string `yaml:"devices,omitempty" json:"devices,omitempty"`
 
