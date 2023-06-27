@@ -331,8 +331,8 @@ Steps to enable this:
 
 1. Add nvidia as your default runtime in /etc/docker/daemon.json
 1. Restart docker (as necessary)
-1. Set accept-nvidia-visible-devices-as-volume-mounts = true in /etc/nvidia-container-runtime/config.toml
-1. Add the following to any kind nodes you want to have access to all GPUs in the system:
+1. Set `accept-nvidia-visible-devices-as-volume-mounts = true` in `/etc/nvidia-container-runtime/config.toml`
+1. Add the `extraMounts` to any kind nodes you want to have access to all GPUs in the system:
 
 {{< codeFromInline lang="yaml" >}}
 kind: Cluster
