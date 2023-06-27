@@ -255,8 +255,15 @@ func runArgsForNode(node *config.Node, clusterIPFamily config.ClusterIPFamily, n
 		args = append(args, "-e", "KUBECONFIG=/etc/kubernetes/admin.conf")
 	}
 
-	// Append GPUs and other CDI device args
+	// Append CDI device args (used for GPU support)
 	if len(node.Devices) > 0 {
+		// Check for docker > 25
+		ver := Version()
+		if strings.Split(ver, ".")[0] < "25" {
+			return nil, errors.Errorf("using devices api in kind requires Docker >= 25, but found %q", ver)
+		}
+
+		// Append args for each device
 		for _, device := range node.Devices {
 			args = append(args, "--device", strings.TrimSpace(device))
 		}
@@ -414,7 +421,7 @@ func createContainer(name string, args []string) error {
 }
 
 func createContainerWithWaitUntilSystemdReachesMultiUserSystem(name string, args []string) error {
-	fmt.Printf("Executing command: docker run --name %s %s\n\n", name, args)
+	// fmt.Printf("Executing command: docker run --name %s %s\n\n", name, args)
 	if err := exec.Command("docker", append([]string{"run", "--name", name}, args...)...).Run(); err != nil {
 		return err
 	}
