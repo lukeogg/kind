@@ -287,12 +287,13 @@ nodes:
 
 ### GPU Support
 
-As a pre-requisite you need to have installed the
-[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on the host.
+There are two ways to map GPUs in to a KinD cluster. The first is using the `devices` API and the second is using the `extraMounts` API.
 
-Docker v25 or later.
+#### Using the Devices API
 
-See notes on CDI Container Support [here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#container-device-interface-cdi-support)
+As a pre-requisite you install the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on the host.
+
+Using `devices` for GPU support requires Docker v25 or later. See notes on CDI Container Support [here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#container-device-interface-cdi-support)
 
 GPU devices can be mapped to Kind node copntainers with the devices API:
 
@@ -307,7 +308,7 @@ nodes:
   - "nvidia.com/gpu=all"
 {{< /codeFromInline >}}
 
-Specific GPUs mapped to specific worker nodes:
+Specific GPUs mapped to specific worker nodes based on index:
 
 {{< codeFromInline lang="yaml" >}}
 kind: Cluster
@@ -321,6 +322,29 @@ nodes:
   devices:
   - "nvidia.com/gpu=1"
 {{< /codeFromInline >}}
+
+#### Using the Extra Mounts API
+
+GPUs can also be mapped using the `extraMounts` API. This method passes a list of GPUs to inject as volume mounts rather than the environment variable `NVIDIA_VISIBLE_DEVICES`.
+
+Steps to enable this:
+
+1. Add nvidia as your default runtime in /etc/docker/daemon.json
+1. Restart docker (as necessary)
+1. Set accept-nvidia-visible-devices-as-volume-mounts = true in /etc/nvidia-container-runtime/config.toml
+1. Add the following to any kind nodes you want to have access to all GPUs in the system:
+
+{{< codeFromInline lang="yaml" >}}
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraMounts:
+  - hostPath: /dev/null
+    containerPath: /var/run/nvidia-container-devices/all
+{{< /codeFromInline >}}
+
+Note: this method only support adding `all` GPUs to a single node. If you want to add specific GPUs to specific nodes, you will need to use the `devices` API.
 
 ### Extra Mounts
 
