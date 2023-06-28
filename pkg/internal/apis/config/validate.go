@@ -210,7 +210,6 @@ func validateDevices(devices []string) error {
 			return errors.Errorf("invalid CDI device string: '%v'. Must be in format 'vendor.com/class=name'", device)
 		}
 	}
-	// TODO: Validate shape of device identifer?
 	return nil
 }
 
