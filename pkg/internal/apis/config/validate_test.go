@@ -345,13 +345,31 @@ func TestNodeValidate(t *testing.T) {
 			ExpectErrors: 1,
 		},
 		{
-			TestName: "Invalid Devices",
+			TestName: "Empty Devices",
 			Node: func() Node {
 				cfg := newDefaultedNode(ControlPlaneRole)
-				cfg.Devices = []string{"TestDevice", "    "}
+				cfg.Devices = []string{"    ", ""}
 				return cfg
 			}(),
 			ExpectErrors: 1,
+		},
+		{
+			TestName: "Invalid Devices",
+			Node: func() Node {
+				cfg := newDefaultedNode(ControlPlaneRole)
+				cfg.Devices = []string{"InvalidDeviceString"}
+				return cfg
+			}(),
+			ExpectErrors: 1,
+		},
+		{
+			TestName: "Valid Devices",
+			Node: func() Node {
+				cfg := newDefaultedNode(ControlPlaneRole)
+				cfg.Devices = []string{"vendor1.com/device", "nvidia.com/gpu=1", "nvidia.com/gpu=all"}
+				return cfg
+			}(),
+			ExpectErrors: 0,
 		},
 		{
 			TestName: "Invalid HostPort",
