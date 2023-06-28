@@ -24,6 +24,8 @@ import (
 
 	"sigs.k8s.io/kind/pkg/errors"
 	"sigs.k8s.io/kind/pkg/internal/sets"
+
+	cdi "github.com/container-orchestrated-devices/container-device-interface/pkg/parser"
 )
 
 // similar to valid docker container names, but since we will prefix
@@ -202,14 +204,10 @@ func validateDevices(devices []string) error {
 		// validate device string is not empty
 		if len(device) == 0 {
 			return errors.Errorf("invalid device string: '%v'. Empty Strings not allowed", device)
-		} else {
-			// validte format of device string - must match: vendor.com/class=name
-			match, err := regexp.MatchString(`[-a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)$`, device)
-			if err != nil {
-				return err
-			} else if !match {
-				return errors.Errorf("invalid CDI device string: '%v'. Must be in format 'vendor.com/class=name'", device)
-			}
+		} else if !cdi.IsQualifiedName(device) {
+			// Validte format of device string - must match: vendor.com/class=name
+			// See: https://github.com/container-orchestrated-devices/container-device-interface/blob/main/SPEC.md#kind
+			return errors.Errorf("invalid CDI device string: '%v'. Must be in format 'vendor.com/class=name'", device)
 		}
 	}
 	// TODO: Validate shape of device identifer?
