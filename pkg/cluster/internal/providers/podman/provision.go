@@ -212,7 +212,7 @@ func runArgsForNode(node *config.Node, clusterIPFamily config.ClusterIPFamily, n
 		args...,
 	)
 
-	// Append GPUs and other CDI device args
+	// Append CDI device args (used for GPU support)
 	if len(node.Devices) > 0 {
 		for _, device := range node.Devices {
 			args = append(args, "--device", strings.TrimSpace(device))
