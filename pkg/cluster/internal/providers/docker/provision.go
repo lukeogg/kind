@@ -421,7 +421,6 @@ func createContainer(name string, args []string) error {
 }
 
 func createContainerWithWaitUntilSystemdReachesMultiUserSystem(name string, args []string) error {
-	// fmt.Printf("Executing command: docker run --name %s %s\n\n", name, args)
 	if err := exec.Command("docker", append([]string{"run", "--name", name}, args...)...).Run(); err != nil {
 		return err
 	}
